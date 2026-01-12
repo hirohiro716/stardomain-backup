@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Star Domain Backup
 // @namespace    https://github.com/hirohiro716/
-// @version      1.1
+// @version      1.2
 // @description  Add the ability to backup DNS records.
 // @author       hiro
 // @match        https://secure.netowl.jp/starapanel/stardomain/domain/dns/index*
@@ -36,7 +36,7 @@ const backup = () => {
     for (const definitionList of definitionLists) {
         const definitionTerm = definitionList.querySelector("dt");
         if (definitionTerm.textContent === "ドメイン") {
-            const definitionDescription = window.document.querySelector("dd");
+            const definitionDescription = definitionList.querySelector("dd");
             filename += "(";
             filename += definitionDescription.textContent;
             filename += ")"
