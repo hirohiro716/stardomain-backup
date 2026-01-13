@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Star Domain Backup
 // @namespace    https://github.com/hirohiro716/
-// @version      1.2
+// @version      1.3
 // @description  Add the ability to backup DNS records.
 // @author       hiro
 // @match        https://secure.netowl.jp/starapanel/stardomain/domain/dns/index*
@@ -13,6 +13,10 @@
 
 const backup = () => {
     let lines = "ホスト名,種別,内容,TTL,優先度";
+    let numberOfARecords = 0;
+    let numberOfCNAMERecords = 0;
+    let numberOfTXTRecords = 0;
+    let numberOfOthers = 0;
     const tableRows = window.document.querySelectorAll("table tbody tr");
     for (const tableRow of tableRows) {
         const tableDatas = tableRow.querySelectorAll("td");
@@ -26,6 +30,21 @@ const backup = () => {
                 line += "\"";
                 line += tableData.textContent;
                 line += "\"";
+            }
+            const type = tableDatas[1].textContent;
+            switch (type) {
+                case "A":
+                    numberOfARecords++;
+                    break;
+                case "CNAME":
+                    numberOfCNAMERecords++;
+                    break;
+                case "TXT":
+                    numberOfTXTRecords++;
+                    break;
+                default:
+                    numberOfOthers++;
+                    break;
             }
             lines += "\n";
             lines += line;
@@ -49,6 +68,15 @@ const backup = () => {
     link.href = window.URL.createObjectURL(blob);
     link.download = filename;
     link.click();
+    let message = "レコードのバックアップを完了しました。\n";
+    message += "A:" + numberOfARecords + "件";
+    message += "、";
+    message += "CNAME:" + numberOfCNAMERecords + "件";
+    message += "、";
+    message += "TXT:" + numberOfTXTRecords + "件";
+    message += "、";
+    message += "その他:" + numberOfOthers + "件";
+    alert(message);
 }
 window.addEventListener("load", () => {
     const div = window.document.querySelector(".btnWrap");
